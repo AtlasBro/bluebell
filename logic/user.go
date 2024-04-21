@@ -18,22 +18,22 @@ func SignUp(p *models.ParamSignUp) (err error) {
 	// 构造一个user实例
 	user := &models.User{
 		UserID:   userID,
-		Username: p.Username,
+		UserName: p.Username,
 		Password: p.Password,
 	}
 	// 3.保存进数据库
 	return mysql.InsertUser(user)
 }
 
-func Login(p *models.ParamLogin) (token string, err error) {
+func Login(p *models.ParamLogin) (aToken, rToken string, err error) {
 	user := &models.User{
-		Username: p.Username,
+		UserName: p.Username,
 		Password: p.Password,
 	}
 	// 传递的是指针，就能拿到user.UserID和user.Username
 	if err := mysql.Login(user); err != nil {
-		return "", err
+		return "", "", nil
 	}
 	// 生成JWT
-	return jwt.GenToken(user.UserID, user.Username)
+	return jwt.GenToken(user.UserID, user.UserName)
 }

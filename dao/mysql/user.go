@@ -38,7 +38,7 @@ func InsertUser(user *models.User) (err error) {
 	user.Password = encryptPassword(user.Password)
 	// 执行SQL语句入库
 	sqlstr := `insert into user(user_id,username,password) values (?,?,?)`
-	_, err = db.Exec(sqlstr, user.UserID, user.Username, user.Password)
+	_, err = db.Exec(sqlstr, user.UserID, user.UserName, user.Password)
 	return
 }
 
@@ -53,14 +53,16 @@ func encryptPassword(oPassword string) string {
 func Login(user *models.User) (err error) {
 	oPassword := user.Password //用户登录的密码
 	sqlstr := `select user_id, username, password from user where username=?`
-	err = db.Get(user, sqlstr, user.Username)
-	if err == sql.ErrNoRows {
-		return ErrorNotExist
-	}
-	if err != nil {
+	err = db.Get(user, sqlstr, user.UserName)
+	if err != nil && err != sql.ErrNoRows {
 		// 查询数据库失败
 		return err
 	}
+	if err == sql.ErrNoRows {
+		// 用户不存在
+		return ErrorNotExist
+	}
+
 	// 判断密码是否正确
 	password := encryptPassword(oPassword)
 	if password != user.Password {

@@ -2,6 +2,7 @@ package settings
 
 import (
 	"fmt"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
@@ -49,12 +50,12 @@ type RedisConfig struct {
 }
 
 func Init() (err error) {
-	viper.SetConfigFile("config.yaml") // (yaml专用于从远程获取配置信息时指定配置文件)
-	viper.AddConfigPath(".")           // 指定查找配置文件的路径(这里使用相对路径)
-	err = viper.ReadInConfig()         // 读取配置信息
+	viper.SetConfigFile("conf/config.yaml") // (yaml专用于从远程获取配置信息时指定配置文件)
+	viper.AddConfigPath(".")                // 指定查找配置文件的路径(这里使用相对路径)
+	err = viper.ReadInConfig()              // 读取配置信息
 	if err != nil {
 		// 读取配置信息失败
-		fmt.Printf("viper.ReadInConfig() failed\n", err)
+		fmt.Println("viper.ReadInConfig() failed\n", err)
 		return
 	}
 	// 把读取到的配置信息反序列化到 Conf 变量中
